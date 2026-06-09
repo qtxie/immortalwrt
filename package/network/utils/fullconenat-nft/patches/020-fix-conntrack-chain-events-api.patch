@@ -1,0 +1,76 @@
+From 845d657c393eb05efbe5b92b66561fa6a375966c Mon Sep 17 00:00:00 2001
+From: Netsight Maintainer <maintainer@netsight.local>
+Date: Tue, 9 Jun 2026 18:00:00 +0800
+Subject: [PATCH] fullconenat-nft: fix conntrack chain events API on 5.15+
+
+The local kernel keeps the Linux 5.15+ nf_ct_event_notifier API even
+when CONFIG_NF_CONNTRACK_CHAIN_EVENTS is enabled. The chaining is handled
+inside nf_conntrack_ecache, so fullconenat-nft must not switch to the old
+struct notifier_block API on these kernels.
+---
+ src/nft_ext_fullcone.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+--- a/src/nft_ext_fullcone.c
++++ b/src/nft_ext_fullcone.c
+@@ -33,7 +33,7 @@ int nf_nat_fullcone_ipv4(struct sk_buff
+ 				  struct nf_nat_range *range);
+ #endif
+ 
+-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
++#if defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS) && LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0)
+ struct notifier_block ct_event_notifier;
+ #else
+ struct nf_ct_event_notifier ct_event_notifier;
+@@ -65,7 +65,7 @@ static const struct nla_policy nft_fullc
+ };
+ 
+ /* conntrack destroy event callback function */
+-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
++#if defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS) && LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0)
+ static int ct_event_cb(struct notifier_block *this, unsigned long events, void *ptr)
+ {
+ 	struct nf_ct_event *item = ptr;
+@@ -114,7 +114,7 @@ static int ct_event_cb(unsigned int even
+ 	return 0;
+ }
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0) && !defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
+ static int exp_event_cb(unsigned int events, const struct nf_exp_event *item)
+ {
+ 	return 0;
+@@ -152,7 +152,7 @@ static int nft_fullcone_init(const struc
+ 	pr_debug("nft_fullcone_init(): module_refer_count is now %d\n", module_refer_count);
+ 
+ 	if (module_refer_count == 1) {
+-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
++#if defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS) && LINUX_VERSION_CODE < KERNEL_VERSION(5, 15, 0)
+ 		ct_event_notifier.notifier_call = ct_event_cb;
+ #elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
+ 		ct_event_notifier.ct_event = ct_event_cb;
+@@ -161,10 +161,14 @@ static int nft_fullcone_init(const struc
+ 		ct_event_notifier.fcn = ct_event_cb;
+ #endif
+ 
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0) && !defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
++#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
++		nf_conntrack_register_notifier(ctx->net, &ct_event_notifier);
++#else
+ 		if (!READ_ONCE(ctx->net->ct.nf_conntrack_event_cb)) {
+ 			nf_conntrack_register_notifier(ctx->net, &ct_event_notifier);
+ 		}
++#endif
+ #else
+ 		register_ct_notifier_ret = nf_conntrack_register_notifier(ctx->net, &ct_event_notifier);
+ #endif
+@@ -253,7 +257,7 @@ static void nft_fullcone_common_destory(
+ 
+ 	if (module_refer_count == 0) {
+ 		if (ct_event_notifier_registered) {
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0) && !defined(CONFIG_NF_CONNTRACK_CHAIN_EVENTS)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
+ 			nf_conntrack_unregister_notifier(ctx->net);
+ #else
+ 			nf_conntrack_unregister_notifier(ctx->net, &ct_event_notifier);
