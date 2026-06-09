@@ -8,16 +8,16 @@ KERNELNAME:=Image
 CPU_TYPE:=cortex-a53
 SUBTARGETS:=ipq807x ipq60xx ipq50xx
 
-KERNEL_PATCHVER:=6.12
+KERNEL_PATCHVER:=6.18
 
 include $(INCLUDE_DIR)/target.mk
 DEFAULT_PACKAGES += \
 	autocore automount cpufreq e2fsprogs f2fs-tools losetup luci uboot-envtools wpad-openssl \
 	kmod-ath11k kmod-ath11k-ahb kmod-ath11k-pci kmod-dsa kmod-dsa-qca8k kmod-phy-aquantia kmod-phy-qca83xx \
 	kmod-fs-ext4 kmod-fs-f2fs kmod-gpio-button-hotplug kmod-leds-gpio kmod-leds-pwm \
-	kmod-usb3 kmod-usb-dwc3 kmod-usb-dwc3-qcom kmod-qca-nss-dp kmod-nss-ifb \
+	kmod-usb3 kmod-usb-dwc3 kmod-usb-dwc3-qcom kmod-nss-ifb \
 	kmod-nf-conntrack-netlink \
-	kmod-qca-nss-drv kmod-qca-nss-ecm \
+	kmod-qca-nss-drv kmod-qca-nss-ecm kmod-qca-nss-dp kmod-qca-ssdk \
 	kmod-qca-nss-drv-bridge-mgr \
 	kmod-qca-nss-drv-eogremgr \
 	kmod-qca-nss-drv-gre \
@@ -35,6 +35,6 @@ DEFAULT_PACKAGES += \
 	kmod-qca-nss-drv-tunipip6 \
 	kmod-qca-nss-drv-vlan-mgr \
 	kmod-qca-nss-drv-vxlanmgr \
-	kmod-qca-nss-drv-wifi-meshmgr \
+	kmod-qca-nss-drv-wifi-meshmgr
 
 $(eval $(call BuildTarget))

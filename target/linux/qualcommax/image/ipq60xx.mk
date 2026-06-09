@@ -96,7 +96,7 @@ define Device/jdcloud_re-cs-02
 	KERNEL_SIZE := 6144k
 	SOC := ipq6010
 	DEVICE_DTS_CONFIG := config@cp03-c3
-	DEVICE_PACKAGES := ipq-wifi-jdcloud_re-cs-02 ath11k-firmware-qcn9074-ddwrt luci-app-athena-led luci-i18n-athena-led-zh-cn
+	DEVICE_PACKAGES := ipq-wifi-jdcloud_re-cs-02 ath11k-firmware-qcn9074-ddwrt luci-app-athena-led
 	IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-rootfs | append-metadata
 endef
 TARGET_DEVICES += jdcloud_re-cs-02
@@ -109,7 +109,8 @@ define Device/jdcloud_re-cs-07
 	KERNEL_SIZE := 6144k
 	SOC := ipq6010
 	DEVICE_DTS_CONFIG := config@cp03-c4
-	DEVICE_PACKAGES := -ath11k-firmware-ipq6018 -ath11k-firmware-qcn9074-ddwrt -kmod-ath11k -kmod-ath11k-ahb -kmod-ath11k-pci -hostapd-common -wpad-openssl
+	DEVICE_PACKAGES := -kmod-ath -kmod-ath11k -kmod-ath11k-ahb -kmod-ath11k-pci \
+		-ath11k-firmware-ipq6018 -ath11k-firmware-ipq6018-ddwrt -ath11k-firmware-qcn9074 -ath11k-firmware-qcn9074-ddwrt
 	IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-rootfs | append-metadata
 endef
 TARGET_DEVICES += jdcloud_re-cs-07
@@ -272,42 +273,42 @@ define Device/tplink_eap6xx-common
 	IMAGE/web-ui-factory.bin := append-ubi | tplink-image-2022
 endef
 
-define Device/tplink_eap610od
+define Device/tplink_eap610-outdoor
 	$(call Device/tplink_eap6xx-common)
 	DEVICE_MODEL := EAP610-Outdoor
 	DEVICE_VARIANT := v1
-	DEVICE_PACKAGES += ipq-wifi-tplink_eap610od
+	DEVICE_PACKAGES += ipq-wifi-tplink_eap610-outdoor
 	TPLINK_SUPPORT_STRING := SupportList:\r\n \
 		EAP610-Outdoor(TP-Link|UN|AX1800-D):1.0\r\n \
 		EAP610-Outdoor(TP-Link|JP|AX1800-D):1.0\r\n \
 		EAP610-Outdoor(TP-Link|CA|AX1800-D):1.0
 endef
-TARGET_DEVICES += tplink_eap610od
+TARGET_DEVICES += tplink_eap610-outdoor
 
-define Device/tplink_eap623od-hd-v1
+define Device/tplink_eap623-outdoor-hd-v1
 	$(call Device/tplink_eap6xx-common)
 	DEVICE_MODEL := EAP623-Outdoor HD
 	DEVICE_VARIANT := v1
-	DEVICE_PACKAGES += ipq-wifi-tplink_eap623od-hd-v1
+	DEVICE_PACKAGES += ipq-wifi-tplink_eap623-outdoor-hd-v1
 	TPLINK_SUPPORT_STRING := SupportList:\r\n \
 		EAP623-Outdoor HD(TP-Link|UN|AX1800-D):1.0
 endef
-TARGET_DEVICES += tplink_eap623od-hd-v1
+TARGET_DEVICES += tplink_eap623-outdoor-hd-v1
 
-define Device/tplink_eap625od-hd-v1
+define Device/tplink_eap625-outdoor-hd-v1
 	$(call Device/tplink_eap6xx-common)
 	DEVICE_MODEL := EAP625-Outdoor HD
 	DEVICE_VARIANT := v1
-	DEVICE_PACKAGES += ipq-wifi-tplink_eap625od-hd-v1
+	DEVICE_PACKAGES += ipq-wifi-tplink_eap625-outdoor-hd-v1
 	TPLINK_SUPPORT_STRING := SupportList:\r\n \
 		EAP625-Outdoor HD(TP-Link|UN|AX1800-D):1.0\r\n \
 		EAP625-Outdoor HD(TP-Link|CA|AX1800-D):1.0\r\n \
 		EAP625-Outdoor HD(TP-Link|AU|AX1800-D):1.0\r\n \
 		EAP625-Outdoor HD(TP-Link|KR|AX1800-D):1.0
 endef
-TARGET_DEVICES += tplink_eap625od-hd-v1
+TARGET_DEVICES += tplink_eap625-outdoor-hd-v1
 
-define Device/tplink_eap620hd-v3
+define Device/tplink_eap620-hd-v3
 	$(call Device/FitImage)
 	$(call Device/UbiFit)
 	DEVICE_VENDOR := TP-Link
@@ -316,7 +317,7 @@ define Device/tplink_eap620hd-v3
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	SOC := ipq6018
-	DEVICE_PACKAGES := ipq-wifi-tplink_eap620hd-v3
+	DEVICE_PACKAGES := ipq-wifi-tplink_eap620-hd-v3
 	IMAGES += web-ui-factory.bin
 	IMAGE/web-ui-factory.bin := append-ubi | tplink-image-2022
 	TPLINK_SUPPORT_STRING := SupportList:\r\n \
@@ -325,7 +326,7 @@ define Device/tplink_eap620hd-v3
 		EAP620 HD(TP-Link|JP|AX1800-D):3.0\r\n \
 		EAP620 HD(TP-Link|EG|AX1800-D):3.0\r\n
 endef
-TARGET_DEVICES += tplink_eap620hd-v3
+TARGET_DEVICES += tplink_eap620-hd-v3
 
 define Device/yuncore_fap650
 	$(call Device/FitImage)
@@ -375,6 +376,16 @@ define Device/cmiot_ax18
 	DEVICE_PACKAGES := ipq-wifi-cmiot_ax18
 endef
 TARGET_DEVICES += cmiot_ax18
+
+define Device/dptech_ap3000-2c
+	$(call Device/nand-common)
+	DEVICE_VENDOR := DPtech
+	DEVICE_MODEL := AP3000-2C
+	SOC := ipq6000
+	DEVICE_DTS_CONFIG := config@cp03-c1-DP019
+	DEVICE_PACKAGES := ipq-wifi-dptech_ap3000-2c
+endef
+TARGET_DEVICES += dptech_ap3000-2c
 
 define Device/redmi_ax5
 	$(call Device/nand-common)

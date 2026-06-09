@@ -251,7 +251,7 @@ TARGET_DEVICES += linksys_mx4300
 define Device/linksys_mx5300
 	$(call Device/linksys_mx)
 	DEVICE_MODEL := MX5300
-	DEVICE_PACKAGES += kmod-rtc-ds1307 ipq-wifi-linksys_mx5300 kmod-ath10k-ct ath10k-firmware-qca9984-ct
+	DEVICE_PACKAGES += kmod-rtc-ds1307 ipq-wifi-linksys_mx5300 kmod-ath10k ath10k-firmware-qca9984
 endef
 TARGET_DEVICES += linksys_mx5300
 
@@ -471,7 +471,7 @@ define Device/tplink_deco-x80-5g
 endef
 TARGET_DEVICES += tplink_deco-x80-5g
 
-define Device/tplink_eap620hd-v1
+define Device/tplink_eap620-hd-v1
 	$(call Device/FitImage)
 	$(call Device/UbiFit)
 	DEVICE_VENDOR := TP-Link
@@ -480,14 +480,14 @@ define Device/tplink_eap620hd-v1
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	SOC := ipq8072
-	DEVICE_PACKAGES := ipq-wifi-tplink_eap620hd-v1
+	DEVICE_PACKAGES := ipq-wifi-tplink_eap620-hd-v1
 	IMAGES += web-ui-factory.bin
 	IMAGE/web-ui-factory.bin := append-ubi | tplink-image-2022
 	TPLINK_SUPPORT_STRING := SupportList:\r\nEAP620 HD(TP-Link|UN|AX1800-D):1.0\r\n
 endef
-TARGET_DEVICES += tplink_eap620hd-v1
+TARGET_DEVICES += tplink_eap620-hd-v1
 
-define Device/tplink_eap660hd-v1
+define Device/tplink_eap660-hd-v1
 	$(call Device/FitImage)
 	$(call Device/UbiFit)
 	DEVICE_VENDOR := TP-Link
@@ -496,12 +496,12 @@ define Device/tplink_eap660hd-v1
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	SOC := ipq8072
-	DEVICE_PACKAGES := ipq-wifi-tplink_eap660hd-v1
+	DEVICE_PACKAGES := ipq-wifi-tplink_eap660-hd-v1
 	IMAGES += web-ui-factory.bin
 	IMAGE/web-ui-factory.bin := append-ubi | tplink-image-2022
 	TPLINK_SUPPORT_STRING := SupportList:\r\nEAP660 HD(TP-Link|UN|AX3600-D):1.0\r\n
 endef
-TARGET_DEVICES += tplink_eap660hd-v1
+TARGET_DEVICES += tplink_eap660-hd-v1
 
 define Device/xiaomi_ax3600
 	$(call Device/FitImage)
@@ -546,7 +546,7 @@ define Device/xiaomi_ax9000
 	PAGESIZE := 2048
 	SOC := ipq8072
 	DEVICE_DTS_CONFIG := config@hk14
-	DEVICE_PACKAGES := ipq-wifi-xiaomi_ax9000 ath11k-firmware-qcn9074-ddwrt ath10k-firmware-qca9887 kmod-ath10k-smallbuffers
+	DEVICE_PACKAGES := ipq-wifi-xiaomi_ax9000 ath11k-firmware-qcn9074-ddwrt ath10k-firmware-qca9887 kmod-ath10k-smallbuffers kmod-hwmon-emc2305
 ifeq ($(IB),)
 ifneq ($(CONFIG_TARGET_ROOTFS_INITRAMFS),)
 	ARTIFACTS := initramfs-factory.ubi

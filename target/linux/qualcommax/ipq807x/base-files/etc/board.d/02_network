@@ -12,7 +12,6 @@ ipq807x_setup_interfaces()
 
 	case "$board" in
 	aliyun,ap8220|\
-	cmcc,rm2-6|\
 	edgecore,eap102|\
 	tcl,linkhub-hh500v|\
 	tplink,deco-x80-5g|\
@@ -35,6 +34,9 @@ ipq807x_setup_interfaces()
 	zbtlink,zbt-z800ax)
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
 		;;
+	cmcc,rm2-6)
+		ucidef_set_interfaces_lan_wan "lan plc" "wan"
+		;;
 	compex,wpq873|\
 	linksys,homewrk|\
 	linksys,mx4200v1|\
@@ -52,8 +54,8 @@ ipq807x_setup_interfaces()
 	edimax,cax1800|\
 	netgear,wax218|\
 	netgear,wax620|\
-	tplink,eap620hd-v1|\
-	tplink,eap660hd-v1)
+	tplink,eap620-hd-v1|\
+	tplink,eap660-hd-v1)
 		ucidef_set_interface_lan "lan" "dhcp"
 		;;
 	netgear,rax120v2)
@@ -107,8 +109,8 @@ ipq807x_setup_macs()
 		lan_mac=$(macaddr_add $label_mac 1)
 		wan_mac=$label_mac
 		;;
-	tplink,eap620hd-v1|\
-	tplink,eap660hd-v1)
+	tplink,eap620-hd-v1|\
+	tplink,eap660-hd-v1)
 		lan_mac=$(get_mac_binary /tmp/factory_data/default-mac 0)
 		label_mac=$lan_mac
 		;;

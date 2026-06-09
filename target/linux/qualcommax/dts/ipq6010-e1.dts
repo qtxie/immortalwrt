@@ -16,18 +16,18 @@
 	compatible = "anysafe,e1", "qcom,ipq6018";
 
 	aliases {
-		serial0 = &blsp1_uart3;
-		serial1 = &blsp1_uart2;
-
-		led-boot = &led_sys_blue;
-		led-failsafe = &led_sys_red;
-		led-running = &led_sys_blue;
-		led-upgrade = &led_sys_red;
-
 		ethernet1 = &dp2;
 		ethernet2 = &dp3;
 		ethernet3 = &dp4;
 		ethernet4 = &dp5;
+
+		serial0 = &blsp1_uart3;
+		serial1 = &blsp1_uart2;
+
+		led-boot = &led_system_blue;
+		led-failsafe = &led_system_red;
+		led-running = &led_system_blue;
+		led-upgrade = &led_system_red;
 	};
 
 	chosen {
@@ -60,13 +60,13 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_sys_red: sys-red {
-			label = "sys:red";
+		led_system_red: system-red {
+			label = "system:red";
 			gpios = <&tlmm 34 GPIO_ACTIVE_HIGH>;
 		};
 
-		led_sys_blue: sys-blue {
-			label = "sys:blue";
+		led_system_blue: system-blue {
+			label = "system:blue";
 			gpios = <&tlmm 29 GPIO_ACTIVE_HIGH>;
 		};
 
@@ -412,6 +412,7 @@
 
 	ethernet-phy-package@0 {
 		compatible = "qcom,qca8075-package";
+		qcom,package-mode = "psgmii";
 		#address-cells = <1>;
 		#size-cells = <0>;
 		reg = <0>;
@@ -504,6 +505,7 @@
 
 &dp5 {
 	status = "okay";
+	phy-mode = "sgmii";
 	phy-handle = <&qca8081>;
 	label = "wan";
 };

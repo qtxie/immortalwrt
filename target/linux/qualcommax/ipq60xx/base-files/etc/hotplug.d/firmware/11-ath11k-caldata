@@ -15,6 +15,7 @@ case "$FIRMWARE" in
 		;;
 	anysafe,e1|\
 	cambiumnetworks,xe3-4|\
+	dptech,ap3000-2c|\
 	philips,ly1800|\
 	sy,y6010)
 		caldata_extract "0:ART" 0x1000 0x10000
@@ -35,10 +36,10 @@ case "$FIRMWARE" in
 	zn,m2)
 		caldata_extract "0:art" 0x1000 0x10000
 		;;
-	tplink,eap610od|\
-	tplink,eap620hd-v3|\
-	tplink,eap623od-hd-v1|\
-	tplink,eap625od-hd-v1)
+	tplink,eap610-outdoor|\
+	tplink,eap620-hd-v3|\
+	tplink,eap623-outdoor-hd-v1|\
+	tplink,eap625-outdoor-hd-v1)
 		caldata_from_file "/tmp/factory_data/radio" 0 0x10000
 		;;
 	yuncore,fap650)

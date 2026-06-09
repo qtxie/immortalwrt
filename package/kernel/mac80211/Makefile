@@ -10,13 +10,13 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=mac80211
 
-PKG_VERSION:=6.18.7
+PKG_VERSION:=6.18.26
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-2.0-only
 PKG_LICENSE_FILES:=COPYING
 
 PKG_SOURCE_URL:=https://github.com/openwrt/backports/releases/download/backports-v$(PKG_VERSION)
-PKG_HASH:=623e5cf46ca8e81fd413f4f465e2580a0143e24929f9c22ce1ba7c34f2872989
+PKG_HASH:=2ad578c6cae22f192fefd44e1449725228d4109ee781998b41dcbae872554968
 
 PKG_SOURCE:=backports-$(PKG_VERSION).tar.zst
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(if $(BUILD_VARIANT),$(PKG_NAME)-$(BUILD_VARIANT)/)backports-$(PKG_VERSION)
@@ -37,10 +37,9 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_MAC80211_MESH \
 	CONFIG_PACKAGE_MAC80211_TRACING \
 	CONFIG_PACKAGE_MAC80211_NSS_SUPPORT \
-	CONFIG_PACKAGE_MAC80211_NSS_REDIRECT \
 	CONFIG_PACKAGE_IWLWIFI_DEBUG \
 	CONFIG_PACKAGE_IWLWIFI_DEBUGFS \
-	CONFIG_PACKAGE_RTLWIFI_DEBUG
+	CONFIG_PACKAGE_RTLWIFI_DEBUG \
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -138,10 +137,6 @@ define KernelPackage/mac80211
   KCONFIG:=\
 	CONFIG_AVERAGE=y
   FILES:= $(PKG_BUILD_DIR)/net/mac80211/mac80211.ko
-ifdef CONFIG_PACKAGE_MAC80211_NSS_REDIRECT
-  AUTOLOAD:=$(call AutoProbe, mac80211)
-  MODPARAMS.mac80211:=nss_redirect=1
-endif
   ABI_VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
   MENU:=1
 endef
@@ -155,13 +150,6 @@ define KernelPackage/mac80211/config
 			default y
 			help
 				This option enables support for NSS in QCA boards.
-		config PACKAGE_MAC80211_NSS_REDIRECT
-			bool "Enable autoloading with 'nss_redirect=1' (not needed on ath11k)"
-			depends on PACKAGE_MAC80211_NSS_SUPPORT
-			default n
-			help
-				This option enables autoloading mac80211 with 'nss_redirect=1'.
-				However, it is not required for wifi offloading.
   endif
 
 	config PACKAGE_MAC80211_DEBUGFS
@@ -309,10 +297,6 @@ ifdef CONFIG_ATH11K_NSS_SUPPORT
 	IREMAP_CFLAGS+=-I$(STAGING_DIR)/usr/include/qca-nss-drv -I$(STAGING_DIR)/usr/include/qca-nss-clients
 endif
 
-ifeq ($(CONFIG_NSS_FIRMWARE_VERSION_11_4),y)
-	C_DEFINES+=-DCONFIG_NSS_FIRMWARE_VERSION_11_4
-endif
-
 config-$(CONFIG_PACKAGE_MAC80211_NSS_SUPPORT) += MAC80211_NSS_SUPPORT
 
 MAKE_OPTS:= \
@@ -440,7 +424,6 @@ define KernelPackage/ath11k/install
 	$(INSTALL_DIR) $(1)/etc/init.d $(1)/etc/config $(1)/usr/bin $(1)/etc/hotplug.d/net
 	$(INSTALL_BIN) ./files/qca-nss-pbuf.init $(1)/etc/init.d/qca-nss-pbuf
 	$(INSTALL_DATA) ./files/pbuf.uci $(1)/etc/config/pbuf
-	$(INSTALL_BIN) ./files/nss_diag.sh $(1)/usr/bin/nss_diag
 	$(INSTALL_DATA) ./files/disable_mesh_chksum_ath11k.hotplug $(1)/etc/hotplug.d/net/99-disable_mesh_chksum_ath11k
 endef
 endif
